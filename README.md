@@ -1,6 +1,6 @@
 # gitopscon_na_2022_session
 
-###Session: https://sched.co/1AR9K
+### Session: https://sched.co/1AR9K
 
 Scenarios:
 
