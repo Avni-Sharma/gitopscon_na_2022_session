@@ -22,3 +22,6 @@ Scenarios:
   6. ArgoCD installs Kyverno in new cluster
   7. ArgoCD installs standard Kyverno policies in the new cluster
   8. Kyverno generates roles, etc. in the management cluster to prevent other teams from accessing it
+  9. User creates Namespace on the managed/tenant cluster
+  10. Kyverno (in the managed/tenant cluster) generates Namespace role-bindings and network policies 
+
