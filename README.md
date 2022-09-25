@@ -2,6 +2,7 @@
 
 ### Session: https://sched.co/1AR9K
 
+
 Scenarios:
 
   Setup and prerequisites:
@@ -25,3 +26,59 @@ Scenarios:
   9. User creates Namespace on the managed/tenant cluster
   10. Kyverno (in the managed/tenant cluster) generates Namespace role-bindings and network policies 
 
+
+## Demo
+
+1. Create management cluster
+
+```sh
+kind create cluster --config kind-mgmt-cluster.yaml --name mgmt
+```
+
+2. Initialize CAPI in the management cluster
+
+```sh
+kind export kubeconfig --name mgmt
+export CLUSTER_TOPOLOGY=true
+clusterctl init --infrastructure docker
+```
+
+3. Install Kyverno
+
+```sh
+kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/main/config/install.yaml
+```
+
+4. Install policies
+
+```sh
+kubectl apply -f policies/
+```
+
+NOTE: Currently, we need to copy the ClusterClass and all related template object to the target namespace. See: https://github.com/kubernetes-sigs/cluster-api/issues/5673 which will allow using a ClusterClass across namespaces.
+
+5. Create a CAPI cluster by creating a new namespace
+
+```sh
+kubectl create ns t1
+```
+
+6. Install a CNI (this will be automated)
+
+```sh
+kind export kubeconfig --name t1
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/calico.yaml
+```
+
+7. Check tenant cluster nodes
+
+```sh
+kubectl get nodes
+```
+
+8. Check the cluster status
+
+```sh
+kubectl config use kind-mgmt
+clusterctl describe cluster t1 -n t1
+```

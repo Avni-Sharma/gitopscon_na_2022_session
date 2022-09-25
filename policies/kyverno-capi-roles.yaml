@@ -1,0 +1,49 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: kyverno
+  name: kyverno:capi-roles
+rules:
+- apiGroups:
+  - cluster.x-k8s.io
+  resources:
+  - clusters
+  - clusterclasses
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
+  - list
+- apiGroups:
+  - infrastructure.cluster.x-k8s.io
+  resources:
+  - dockerclustertemplates
+  - dockermachinetemplates
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
+  - list
+- apiGroups:
+  - controlplane.cluster.x-k8s.io
+  resources:
+  - kubeadmcontrolplanetemplates
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
+  - list
+- apiGroups:
+  - bootstrap.cluster.x-k8s.io
+  resources:
+  - kubeadmconfigtemplates
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
+  - list
