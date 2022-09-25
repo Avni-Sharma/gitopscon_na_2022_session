@@ -43,19 +43,13 @@ export CLUSTER_TOPOLOGY=true
 clusterctl init --infrastructure docker
 ```
 
-3. Install CAPI templates
-
-```sh
-kubectl apply -f capi-templates.yaml
-```
-
-4. Install Kyverno
+3. Install Kyverno
 
 ```sh
 kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/main/config/install.yaml
 ```
 
-5. Install policies
+4. Install policies
 
 ```sh
 kubectl apply -f policies/
@@ -63,26 +57,26 @@ kubectl apply -f policies/
 
 NOTE: Currently, we need to copy the ClusterClass and all related template object to the target namespace. See: https://github.com/kubernetes-sigs/cluster-api/issues/5673 which will allow using a ClusterClass across namespaces.
 
-6. Create a CAPI cluster by creating a new namespace
+5. Create a CAPI cluster by creating a new namespace
 
 ```sh
 kubectl create ns t1
 ```
 
-7. Install a CNI (this will be automated)
+6. Install a CNI (this will be automated)
 
 ```sh
 kind export kubeconfig --name t1
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/calico.yaml
 ```
 
-8. Check tenant cluster nodes
+7. Check tenant cluster nodes
 
 ```sh
 kubectl get nodes
 ```
 
-9. Check the cluster status
+8. Check the cluster status
 
 ```sh
 kubectl config use kind-mgmt
