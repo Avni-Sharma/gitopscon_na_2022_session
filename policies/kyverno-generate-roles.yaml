@@ -27,6 +27,8 @@ rules:
   - update
   - patch
   - delete
+  - get
+  - list
 - apiGroups:
   - rbac.authorization.k8s.io
   resources:

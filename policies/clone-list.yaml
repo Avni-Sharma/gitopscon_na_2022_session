@@ -1,0 +1,27 @@
+# apiVersion: kyverno.io/v1
+# kind: ClusterPolicy
+# metadata:
+#   name: clone-capi-templates
+# spec:
+#   rules:
+#   - name: clone
+#     match:
+#       any:
+#       - resources:
+#           kinds:
+#           - Namespace
+#     exclude:
+#       any:
+#       - resources:
+#           namespaces:
+#           - capi-templates
+#     generate:
+#       synchronize: true
+#       cloneList:
+#         namespace: capi-templates
+#         kinds:
+#         - clusterclasses
+#         - dockerclustertemplates
+#         - dockermachinetemplates
+#         - kubeadmcontrolplanetemplates
+#         - kubeadmconfigtemplates

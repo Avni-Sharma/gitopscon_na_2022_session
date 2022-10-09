@@ -43,13 +43,34 @@ export CLUSTER_TOPOLOGY=true
 clusterctl init --infrastructure docker
 ```
 
-3. Install Kyverno
+3. Install and configure ArgoCD
+
+```sh
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+```sh
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+```
+
+```sh
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+```
+
+```sh
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+```
+
+Navigate to: https://127.0.0.1:8080/
+
+4. Install Kyverno
 
 ```sh
 kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/main/config/install.yaml
 ```
 
-4. Install policies
+5. Install policies
 
 ```sh
 kubectl apply -f policies/
@@ -57,26 +78,45 @@ kubectl apply -f policies/
 
 NOTE: Currently, we need to copy the ClusterClass and all related template object to the target namespace. See: https://github.com/kubernetes-sigs/cluster-api/issues/5673 which will allow using a ClusterClass across namespaces.
 
-5. Create a CAPI cluster by creating a new namespace
+6. Create a CAPI cluster by creating a new namespace
 
 ```sh
 kubectl create ns t1
 ```
 
-6. Install a CNI (this will be automated)
+7. Check for the tenant cluster to be created:
+
+```sh
+clusterctl describe cluster t1 -n t1
+```
+
+The output should match:
+
+```sh
+NAME                                              READY  SEVERITY  REASON                       SINCE  MESSAGE                                                     
+Cluster/t1                                        True                                          66s                                                                
+├─ClusterInfrastructure - DockerCluster/t1-qbkbg  True                                          108s                                                               
+├─ControlPlane - KubeadmControlPlane/t1-w7v8w     True                                          66s                                                                
+│ └─Machine/t1-w7v8w-pxp6v                        True                                          66s                                                                
+└─Workers                                                                                                                                                          
+  └─MachineDeployment/t1-md-0-7mvsm               False  Warning   WaitingForAvailableMachines  109s   Minimum availability requires 1 replicas, current 0 available
+    └─Machine/t1-md-0-7mvsm-559b5688b6-hp55r      True                                          26s                                                                
+```
+
+8. Install a CNI (this will be automated)
 
 ```sh
 kind export kubeconfig --name t1
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/calico.yaml
 ```
 
-7. Check tenant cluster nodes
+9. Check tenant cluster nodes
 
 ```sh
 kubectl get nodes
 ```
 
-8. Check the cluster status
+10. Check the cluster status
 
 ```sh
 kubectl config use kind-mgmt

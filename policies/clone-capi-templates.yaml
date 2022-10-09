@@ -4,28 +4,6 @@ metadata:
   name: clone-capi-templates
 spec:
   rules:
-  # - name: clone
-  #   match:
-  #     any:
-  #     - resources:
-  #         kinds:
-  #         - Namespace
-  #   exclude:
-  #     any:
-  #     - resources:
-  #         namespaces:
-  #         - capi-templates
-  #   generate:
-  #     kind: ClusterClass
-  #     synchronize: true
-  #     cloneList:
-  #       namespace: capi-templates
-  #       kinds:
-  #       - cluster.x-k8s.io/v1beta1/clusterclasses
-  #       - dockerclustertemplates
-  #       - dockermachinetemplates
-  #       - kubeadmcontrolplanetemplates
-  #       - kubeadmconfigtemplates
   - name: clone-kubeadmconfigtemplate
     match:
       any:
@@ -164,6 +142,8 @@ spec:
       - resources:
           kinds:
           - Namespace
+          names:
+            - "cluster*"
     preconditions:
       all:
       - key: "{{ request.operation }}"
