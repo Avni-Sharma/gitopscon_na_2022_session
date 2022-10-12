@@ -63,6 +63,9 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 ```
 
 Navigate to: https://127.0.0.1:8080/
+Login through argocd cli
+```
+argocd login localhost:8080 --username admin --password <Paste the above password>
 
 4. Install Kyverno
 
@@ -81,32 +84,35 @@ NOTE: Currently, we need to copy the ClusterClass and all related template objec
 6. Create a CAPI cluster by creating a new namespace
 
 ```sh
-kubectl create ns t1
+kubectl create ns cluster1
 ```
 
 7. Check for the tenant cluster to be created:
 
 ```sh
-clusterctl describe cluster t1 -n t1
+clusterctl describe cluster cluster1 -n cluster1
 ```
 
 The output should match:
 
 ```sh
-NAME                                              READY  SEVERITY  REASON                       SINCE  MESSAGE                                                     
-Cluster/t1                                        True                                          66s                                                                
-├─ClusterInfrastructure - DockerCluster/t1-qbkbg  True                                          108s                                                               
-├─ControlPlane - KubeadmControlPlane/t1-w7v8w     True                                          66s                                                                
-│ └─Machine/t1-w7v8w-pxp6v                        True                                          66s                                                                
-└─Workers                                                                                                                                                          
-  └─MachineDeployment/t1-md-0-7mvsm               False  Warning   WaitingForAvailableMachines  109s   Minimum availability requires 1 replicas, current 0 available
-    └─Machine/t1-md-0-7mvsm-559b5688b6-hp55r      True                                          26s                                                                
+NAME                                                    READY  SEVERITY  REASON  SINCE  MESSAGE 
+Cluster/cluster1                                        True                     6h34m           
+├─ClusterInfrastructure - DockerCluster/cluster1-tdtcd  True                     6h35m           
+├─ControlPlane - KubeadmControlPlane/cluster1-td584     True                     6h34m           
+│ └─Machine/cluster1-td584-lpn4t                        True                     6h34m           
+└─Workers                                                                                        
+  └─MachineDeployment/cluster1-md-0-s9mv8               True                     6h18m           
+    └─Machine/cluster1-md-0-s9mv8-d69fc6bb9-hgp5p       True                     6h34m           
+
+New clusterctl version available: v1.2.2 -> v1.2.3
+https://github.com/kubernetes-sigs/cluster-api/releases/tag/v1.2.3                                                        
 ```
 
 8. Install a CNI (this will be automated)
 
 ```sh
-kind export kubeconfig --name t1
+kind export kubeconfig --name cluster1
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/calico.yaml
 ```
 
@@ -120,5 +126,5 @@ kubectl get nodes
 
 ```sh
 kubectl config use kind-mgmt
-clusterctl describe cluster t1 -n t1
+clusterctl describe cluster cluster1 -n cluster1
 ```
