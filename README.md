@@ -64,8 +64,9 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 
 Navigate to: https://127.0.0.1:8080/
 Login through argocd cli
-```
+```sh
 argocd login localhost:8080 --username admin --password <Paste the above password>
+```
 
 4. Install Kyverno
 
