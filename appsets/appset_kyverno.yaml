@@ -1,0 +1,29 @@
+kind: ApplicationSet
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: kyverno
+spec:
+  generators:
+  - clusters:
+      selector:
+        matchLabels:
+          clusterType: tenant        
+  template: 
+    # This is a template Argo CD Application, but with support for parameter substitution.
+    metadata:
+      name: '{{name}}-kyverno'
+      annotations:
+        argocd.argoproj.io/sync-wave: "1"
+    spec:
+      project: "default"
+      source:
+        repoURL: https://github.com/Avni-Sharma/gitopscon_na_2022_session
+        targetRevision: HEAD
+        path: install/kyverno
+      destination:
+        server: '{{server}}'
+        namespace: kyverno
+      syncPolicy:
+        syncOptions:
+        -  Replace=true
+

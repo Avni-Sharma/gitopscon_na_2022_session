@@ -1,0 +1,25 @@
+kind: ApplicationSet
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: calico
+spec:
+  generators:
+  - clusters: {} # This is a generator, specifically, a cluster generator.
+  template: 
+    # This is a template Argo CD Application, but with support for parameter substitution.
+    metadata:
+      name: '{{name}}-calico'
+      annotations:
+        argocd.argoproj.io/sync-wave: "0"
+    spec:
+      project: "default"
+      source:
+        repoURL: https://github.com/Avni-Sharma/gitopscon_na_2022_session
+        targetRevision: HEAD
+        path: install/calico
+      destination:
+        server: '{{server}}'
+        namespace: default
+      syncPolicy:
+        syncOptions:
+        -  FailOnSharedResource=false  

@@ -37,6 +37,7 @@ spec:
           value:
             argocd.argoproj.io/secret-type: cluster
             clusterId: "{{ clusterName }}"
+            clusterType: "tenant" 
       - name: serverName
         variable:
           value: "{{  request.object.data.value | base64_decode(@) | parse_yaml(@).clusters[0].cluster.server }}"
