@@ -25,5 +25,6 @@ spec:
         namespace: kyverno
       syncPolicy:
         syncOptions:
-        -  Replace=true
-
+        - Replace=true
+        automated:
+          selfHeal: true  
