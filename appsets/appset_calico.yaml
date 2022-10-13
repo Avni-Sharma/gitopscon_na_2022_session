@@ -22,4 +22,6 @@ spec:
         namespace: default
       syncPolicy:
         syncOptions:
-        -  FailOnSharedResource=false  
+        - FailOnSharedResource=false
+        automated:
+          selfHeal: true  
