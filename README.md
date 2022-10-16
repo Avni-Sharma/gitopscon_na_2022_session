@@ -68,18 +68,31 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 
 
 Navigate to: https://127.0.0.1:8080/
+
 Login through argocd cli
+
 ```sh
 argocd login localhost:8080 --username admin --password <SECRET>
 ```
 
-4. Install Kyverno
+4. Install AppSets
+
+```sh
+kubectl create -f appsets
+```
+
+```sh
+kubectl get appsets
+```
+
+
+5. Install Kyverno
 
 ```sh
 kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/main/config/install.yaml
 ```
 
-5. Install policies
+6. Install policies
 
 ```sh
 kubectl apply -f policies/
@@ -87,13 +100,13 @@ kubectl apply -f policies/
 
 NOTE: Currently, we use policies to copy the ClusterClass and all related template object to the target namespace. See: https://github.com/kubernetes-sigs/cluster-api/issues/5673 which will allow using a ClusterClass across namespaces.
 
-6. Create a CAPI cluster by creating a new namespace
+7. Create a CAPI cluster by creating a new namespace
 
 ```sh
 kubectl create ns cluster1
 ```
 
-7. Check for the tenant cluster to be created:
+8. Check for the tenant cluster to be created:
 
 ```sh
 clusterctl describe cluster cluster1 -n cluster1
@@ -115,22 +128,33 @@ New clusterctl version available: v1.2.2 -> v1.2.3
 https://github.com/kubernetes-sigs/cluster-api/releases/tag/v1.2.3                                                        
 ```
 
-8. Install a CNI (this will be automated)
+9. Install a CNI (this will be automated)
 
 ```sh
 kind export kubeconfig --name cluster1
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/calico.yaml
 ```
 
-9. Check tenant cluster nodes
+10. Check tenant cluster nodes
 
 ```sh
 kubectl get nodes
 ```
 
-10. Check the cluster status
+11. Check the cluster status
 
 ```sh
 kubectl config use kind-mgmt
 clusterctl describe cluster cluster1 -n cluster1
 ```
+
+## Cleanup
+
+```sh
+kind export kubeconfig --name mgmt
+kubectl delete cluster cluster1 -n cluster1
+kubectl delete ns cluster1
+kubectl delete secret cluster1 -n argocd
+kubectl delete ur --all -n kyverno
+```
+

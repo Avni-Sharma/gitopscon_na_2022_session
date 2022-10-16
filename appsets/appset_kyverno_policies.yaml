@@ -19,7 +19,7 @@ spec:
       source:
         repoURL: https://github.com/jimbugwadia/gitopscon_na_2022_session
         targetRevision: HEAD
-        path: install/kyverno-policies
+        path: install/kyverno_policies
       destination:
         server: '{{server}}'
       syncPolicy:
@@ -27,3 +27,9 @@ spec:
         - Replace=true
         automated:
           selfHeal: true  
+        retry:
+          limit: 30
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m0s
