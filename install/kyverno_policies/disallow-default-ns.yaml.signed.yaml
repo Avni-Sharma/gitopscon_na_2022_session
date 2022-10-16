@@ -1,0 +1,21 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    cosign.sigstore.dev/message: H4sIAAAAAAAA/wBfAaD+H4sIAAAAAAAA/+yST2/iMBDFc86nmD1xCnFCAru5rVbaM5fd+2APqYX/RP5DRT995UAoolKL1ENVld/FcZ7n+dmeMuih5FYPjryXpi8CuqJ/Kn5VraCfleDthkohPSplHwtBW4wqFMbPD6hVdhuMMbZsmnFkjF2PrF0ts6pZ1PWqqZb1ImN1UzVtBuxG/w8RfUCXMeasDW+te0+/PtwXAQf5n5yX1nSwO+zJGTuXttxX+U4a0cEfFX0gt7ZK8kOuKaDAgF0OYFBTB69bAzX5ATnlfiCeFm6Q73pnY7ILLlIO4KIin7QCNAb+kD4TjryNjh+1IynGxbSAtRXj7Lj/HpUUGOhi3yROv6dCTd5jTx38S00Os1PaGZzLQHowNsB4GhLzU+GAIZAzLwEur2DibNLB7MdknZ9TSGv+olTR0W8expsms7WOU/7Zr3/nzp3vzHMAAAD///nwuM4ACAAAAQAA//9+rCtSXwEAAA==
+    cosign.sigstore.dev/signature: MEQCIBoC15lkxqyN2t5pwPDTdkKu/nmfFoE7X9f9kGL54DxYAiAHTMm4p2fbo+oZtW9j68PBEpSlMM1sForVk4l6nde2Wg==
+  name: disallow-default-namespace
+spec:
+  background: true
+  rules:
+  - match:
+      resources:
+        kinds:
+        - Pod
+    name: validate-namespace
+    validate:
+      message: Using 'default' namespace is not allowed.
+      pattern:
+        metadata:
+          namespace: '!default'
+  validationFailureAction: enforce

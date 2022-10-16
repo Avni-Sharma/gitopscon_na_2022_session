@@ -1,0 +1,22 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    cosign.sigstore.dev/message: H4sIAAAAAAAA/wBiAZ3+H4sIAAAAAAAA/+yST4/TMBDFc86nmDNSEudPd6VcEELivAfEuVN7mlpx7DC2K5VPj5wQKBUClQtC29/FcZ49b541VZjmSrppZvJe26EIyMXwpTjKbteQUs2xVRXT56iZCoMHMr684GSyOxBCiKeuW1YhxO0qnupdVndt0zx3jWifM9G0za7OQNxj8rdEH5AzIdi58Ltzf9Jvw/0n4Kw/EXvtbA/j5UxsXaldda7zUVvVw3sTfSB+cUbLSz5RQIUB+xzA4kQ9/DwauZ9JJvGAchzYxVQicKQcgKMhn7QCJgzylD4TTN5Flqu2kqyvtgW8OLXsVk95IjkWR8eba5LOaLTCQNu1ibzHgXr4eCJYzsEe57kc44HYUiCfcqaCe9B+y6HKb9dnDIHY/mjiOvrGan/9B+DXHj28fZN/b1I7+wG1iUzvZFieHqPSIf/Xw/DgwYNXxdcAAAD//8LwycQACAAAAQAA//8V5PP2YgEAAA==
+    cosign.sigstore.dev/signature: MEYCIQDtG8XUKXXpYnTflccfdSa0xVIloOBQKuBcbJJRMb7DAwIhALQwQlL4M0o2mfkIs9G7jo7tXZvNxxk+UcWq6Aryejec
+  name: require-labels
+spec:
+  background: true
+  rules:
+  - match:
+      resources:
+        kinds:
+        - Pod
+    name: check-for-labels
+    validate:
+      message: The label `app.kubernetes.io/name` is required.
+      pattern:
+        metadata:
+          labels:
+            app.kubernetes.io/name: ?*
+  validationFailureAction: audit
