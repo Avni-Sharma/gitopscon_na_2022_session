@@ -3,7 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: require-requests-limits 
 spec:
-  validationFailureAction: audit
+  validationFailureAction: enforce
   background: true
   rules:
   - name: validate-resources

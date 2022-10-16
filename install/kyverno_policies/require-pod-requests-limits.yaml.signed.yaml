@@ -2,8 +2,8 @@ apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
   annotations:
-    cosign.sigstore.dev/message: H4sIAAAAAAAA/wB7AYT+H4sIAAAAAAAA/+ySzY7TMBDHc85TzBnJrd2GrsgFoZU49wL3wR4Vq7EdxuNK5elRvmAVVrsXBELK72J7/vOZzF5Cv7cp9Ew5+3hRgqwu3xUdzVGjObrGvNszfSueSfXJqeFOWbLqfPCSd3cMXfUyWmt9aprx1FqvT6PNqTLN8XB4aMyDMZU+vG3MqQL9St4/QsmCXGnNKclLfq/p6+H+E7D3n4mzT7GF6/1GHNPOp/3N1FcfXQuPXclCfE6dt/c6kKBDwbYGiBiohWU1VmtR557s4PUF7fXCqQy5hAvVAFw6yoOmIKDYr8N1gCmnwnbSJoYenjwVnJMbX1PxG3beoQzV59BRXMxLYKCc8UItPJ4/AUYHgULi+8+CsDQ/itMAgEzLcG43J+pRhDj+amiZcsGmKOgjcX5qVc+NNjEVW1th7rCF929W0tLq7yG2L8/4r1LNn8an+BF9V5g+WBn/PRbnpf7X27ixsbGx8bf4EQAA///8i/++AAoAAAEAAP//hwHOFnsBAAA=
-    cosign.sigstore.dev/signature: MEUCIQCGMhQMBAfsPRQ/CnqHhS3pxwcgjlnygzm1N6ZGqaHFPwIgcumjNYiq1KqJxWnX/nTlq7Ew7H/6i10faD80gJ5TXqY=
+    cosign.sigstore.dev/message: H4sIAAAAAAAA/wB/AYD+H4sIAAAAAAAA/+ySzW7UMBDHc85TzBnJu0427aJcEKrEeS9wH5zpYm1sh/F4peXpUT4MVajaCwJVyu9ie/7zmcxe3LA3wQ1MMVp/VoKszj8UYXd8rJumeU+HPdP3ZJnUEDo13ilKVL11VuLuhq4vXkZrre+bZjq11uuz0rUuquZQ18fmUB3vCl3f3euqAP1K3r9CioJcaM0hyEt+r+nr4d4IONgvxNEG38LldiX2YWfD/lqVF+u7Fh76FIX4FHprbqUjwQ4F2xLAo6MW8mqs1qKMA5nR6yuay5lDGnMJJyoBOPUUR02BQzHfxusIUwyJzazNjD08eSo4hW56zcWv2NsOZay+hE5iNudARzHimVp4OH0G9B04coFvvwpCbn4S5wEAmfJw3W5JNKAIsf/dUJ4yY4IXtJ44PrWq50abmYutrbB02MKHdyspt/pniBnSM/6rVMunscF/Qtsnpo9Gpn9P/jGwofJ/7+PGxsbGxr/hZwAAAP//heAp2wAKAAABAAD//+GoSAp/AQAA
+    cosign.sigstore.dev/signature: MEYCIQDTrEgvWZoIvk7plcIjUvzmzWe7HY6c4KWbLMkn1C79fAIhAOtcCqwf1jn5pbDKuTf9DxIeTSMoQussUeYsH0dvhUAG
   name: require-requests-limits
 spec:
   background: true
@@ -24,4 +24,4 @@ spec:
               requests:
                 cpu: ?*
                 memory: ?*
-  validationFailureAction: audit
+  validationFailureAction: enforce
