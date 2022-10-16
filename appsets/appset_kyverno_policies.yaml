@@ -1,30 +1,29 @@
 kind: ApplicationSet
 apiVersion: argoproj.io/v1alpha1
 metadata:
-  name: calico
+  name: kyverno-policies
   namespace: argocd
 spec:
   generators:
   - clusters:
       selector:
         matchLabels:
-          clusterType: tenant
+          clusterType: tenant    
   template: 
     metadata:
-      name: '{{name}}-calico'
+      name: '{{name}}-kyverno-policies'
       annotations:
-        argocd.argoproj.io/sync-wave: "0"
+        argocd.argoproj.io/sync-wave: "2"
     spec:
       project: "default"
       source:
-        repoURL: https://github.com/Avni-Sharma/gitopscon_na_2022_session
+        repoURL: https://github.com/jimbugwadia/gitopscon_na_2022_session
         targetRevision: HEAD
-        path: install/calico
+        path: install/kyverno-policies
       destination:
         server: '{{server}}'
-        namespace: default
       syncPolicy:
         syncOptions:
-        - FailOnSharedResource=false
+        - Replace=true
         automated:
           selfHeal: true  

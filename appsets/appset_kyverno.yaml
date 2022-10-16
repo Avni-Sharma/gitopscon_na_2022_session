@@ -2,6 +2,7 @@ kind: ApplicationSet
 apiVersion: argoproj.io/v1alpha1
 metadata:
   name: kyverno
+  namespace: argocd
 spec:
   generators:
   - clusters:
@@ -9,7 +10,6 @@ spec:
         matchLabels:
           clusterType: tenant        
   template: 
-    # This is a template Argo CD Application, but with support for parameter substitution.
     metadata:
       name: '{{name}}-kyverno'
       annotations:

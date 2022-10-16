@@ -55,17 +55,22 @@ kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}
 ```
 
 ```sh
-kubectl port-forward svc/argocd-server -n argocd 8080:443
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
 ```
 
 ```sh
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+ argocd login 127.0.0.1:8080 ----username admin --password <SECRET>
 ```
+
+```sh
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+```
+
 
 Navigate to: https://127.0.0.1:8080/
 Login through argocd cli
 ```sh
-argocd login localhost:8080 --username admin --password <Paste the above password>
+argocd login localhost:8080 --username admin --password <SECRET>
 ```
 
 4. Install Kyverno
@@ -80,7 +85,7 @@ kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/main/config/
 kubectl apply -f policies/
 ```
 
-NOTE: Currently, we need to copy the ClusterClass and all related template object to the target namespace. See: https://github.com/kubernetes-sigs/cluster-api/issues/5673 which will allow using a ClusterClass across namespaces.
+NOTE: Currently, we use policies to copy the ClusterClass and all related template object to the target namespace. See: https://github.com/kubernetes-sigs/cluster-api/issues/5673 which will allow using a ClusterClass across namespaces.
 
 6. Create a CAPI cluster by creating a new namespace
 
