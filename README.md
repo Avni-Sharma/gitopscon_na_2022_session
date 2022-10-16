@@ -59,13 +59,12 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 ```
 
 ```sh
- argocd login 127.0.0.1:8080 ----username admin --password <SECRET>
-```
-
-```sh
 kubectl port-forward svc/argocd-server -n argocd 8080:443
 ```
 
+```sh
+ argocd login 127.0.0.1:8080 --username admin --password <SECRET>
+```
 
 Navigate to: https://127.0.0.1:8080/
 

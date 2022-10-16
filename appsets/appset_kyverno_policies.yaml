@@ -17,7 +17,7 @@ spec:
     spec:
       project: "default"
       source:
-        repoURL: https://github.com/jimbugwadia/gitopscon_na_2022_session
+        repoURL: https://github.com/Avni-Sharma/gitopscon_na_2022_session
         targetRevision: HEAD
         path: install/kyverno_policies
       destination:
