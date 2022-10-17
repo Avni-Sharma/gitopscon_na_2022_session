@@ -55,40 +55,57 @@ kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}
 ```
 
 ```sh
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+```
+
+```sh
 kubectl port-forward svc/argocd-server -n argocd 8080:443
 ```
 
 ```sh
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+ argocd login 127.0.0.1:8080 --username admin --password <SECRET>
 ```
 
 Navigate to: https://127.0.0.1:8080/
+
 Login through argocd cli
+
 ```sh
-argocd login localhost:8080 --username admin --password <Paste the above password>
+argocd login localhost:8080 --username admin --password <SECRET>
 ```
 
-4. Install Kyverno
+4. Install AppSets
+
+```sh
+kubectl create -f appsets
+```
+
+```sh
+kubectl get appsets
+```
+
+
+5. Install Kyverno
 
 ```sh
 kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/main/config/install.yaml
 ```
 
-5. Install policies
+6. Install policies
 
 ```sh
 kubectl apply -f policies/
 ```
 
-NOTE: Currently, we need to copy the ClusterClass and all related template object to the target namespace. See: https://github.com/kubernetes-sigs/cluster-api/issues/5673 which will allow using a ClusterClass across namespaces.
+NOTE: Currently, we use policies to copy the ClusterClass and all related template object to the target namespace. See: https://github.com/kubernetes-sigs/cluster-api/issues/5673 which will allow using a ClusterClass across namespaces.
 
-6. Create a CAPI cluster by creating a new namespace
+7. Create a CAPI cluster by creating a new namespace
 
 ```sh
 kubectl create ns cluster1
 ```
 
-7. Check for the tenant cluster to be created:
+8. Check for the tenant cluster to be created:
 
 ```sh
 clusterctl describe cluster cluster1 -n cluster1
@@ -110,22 +127,43 @@ New clusterctl version available: v1.2.2 -> v1.2.3
 https://github.com/kubernetes-sigs/cluster-api/releases/tag/v1.2.3                                                        
 ```
 
-8. Install a CNI (this will be automated)
+9. Check the ArgoCD UI to verify that the three applications (Calico, Kyverno, and Kyverno policies) are deployed. You may need to refresh to trigger the deploy.
+
+10. Switch to the tenant cluster and try to create a pod:
 
 ```sh
 kind export kubeconfig --name cluster1
-kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/calico.yaml
 ```
-
-9. Check tenant cluster nodes
 
 ```sh
-kubectl get nodes
+kubectl run test --image=nginx
 ```
 
-10. Check the cluster status
+You should see an error stating that the image is not signed.
+
+11. Try running a signed image:
 
 ```sh
-kubectl config use kind-mgmt
-clusterctl describe cluster cluster1 -n cluster1
+kubectl run test --image ghcr.io/kyverno/test-verify-image:signed
 ```
+
+This will now show other policy violation errors.
+
+12. Try running a signed image with proper configuration:
+
+```sh
+kubectl create ns test
+kubectl -n test -f resources/good-pod.yaml
+```
+
+
+## Cleanup
+
+```sh
+kind export kubeconfig --name mgmt
+kubectl delete cluster cluster1 -n cluster1
+kubectl delete ns cluster1
+kubectl delete secret cluster1 -n argocd
+kubectl delete ur --all -n kyverno
+```
+

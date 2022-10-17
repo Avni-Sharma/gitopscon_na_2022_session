@@ -2,11 +2,14 @@ kind: ApplicationSet
 apiVersion: argoproj.io/v1alpha1
 metadata:
   name: calico
+  namespace: argocd
 spec:
   generators:
-  - clusters: {} # This is a generator, specifically, a cluster generator.
+  - clusters:
+      selector:
+        matchLabels:
+          clusterType: tenant
   template: 
-    # This is a template Argo CD Application, but with support for parameter substitution.
     metadata:
       name: '{{name}}-calico'
       annotations:
@@ -25,3 +28,9 @@ spec:
         - FailOnSharedResource=false
         automated:
           selfHeal: true  
+        retry:
+          limit: 30
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m0s

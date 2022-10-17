@@ -1,0 +1,25 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    cosign.sigstore.dev/message: H4sIAAAAAAAA/wD+AQH+H4sIAAAAAAAA/+ySX2/aPBTGuc6nsHpT6ZXcOCmUP1IvUkhLmrcUkMoG4sY4h2CS2KntUKWffkpotYKmrdMupkn8bnzyHNvnSfLYJsttJrNcgdZcxNhQheNXTEjn0iHOJXOgZSt4LrgCrHksIMI8ozHoi5JmaeMzEELIVbNZr4SQ49VxHLfhNC9dt910HddtELfpkFYDkU/d/ocU2lDVIERJaX6271f945f7R6A5n4HSXIoeSsodKCEvuLR3jpVwEfVQPy20ATWWKWellYGhETW0ZyEkaAY9tAPF1+U+EpbOgVWtFWVJrGRRXbCmqQYLIVWkoKsmRhk1bFOVFVSU7yVGCrQsFNtvfKcyciBgNJZR/fwDD5W8F4I6pvuDGFFjQBup9PdpIIziH2dhlEB5MAqhvFilnIWVjs5wxY1/F4zQ+Onm/6CPQn9ei0vxcJu8+C/zYSgXweuW9L3JPHirB96EDSax53fE1+mm2yLBYjXddqbUHnX16vlxvFDrh6Vo2aE3GRE73A6ZVJl93yqZmUVt7jMBWk8n26eu095k4ePV/ZfZ3TAfxEVQ0mThXV8vRW3DHw0O3KNjn+iIpTh7O1B/vimsQYH48AcwOv/v3EJoR1MeUcOluKU8LRR4zNSpAbGWioH1t5N84sSJEyd+h28BAAD//52QRMMACgAAAQAA//+NBRa8/gEAAA==
+    cosign.sigstore.dev/signature: MEUCICC2JFbEdMgh4jjX0Keuj5+kAXgo1mCfpfdzkqE/PNfxAiEA3+dIsbWZusLwWGfpk4yQN17dWnkq5Ol10wfTdlugmPQ=
+  name: verify-image
+spec:
+  background: false
+  rules:
+  - match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    name: verify-image
+    verifyImages:
+    - attestors:
+      - entries:
+        - keys:
+            publicKeys: "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE8nXRh950IZbRj8Ra/N9sbqOPZrfM\n5/KAQN0/KjHcorm/J5yctVd7iEcnessRQjU917hmKO6JWVGHpDguIyakZA==\n-----END
+              PUBLIC KEY-----                \n"
+      imageReferences:
+      - '*'
+  validationFailureAction: enforce

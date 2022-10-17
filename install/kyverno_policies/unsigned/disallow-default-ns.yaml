@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-default-namespace
+spec:
+  validationFailureAction: enforce
+  background: true
+  rules:
+  - name: validate-namespace
+    match:
+      resources:
+        kinds:
+        - Pod
+    validate:
+      message: "Using 'default' namespace is not allowed."
+      pattern:
+        metadata:
+          namespace: "!default"
+
