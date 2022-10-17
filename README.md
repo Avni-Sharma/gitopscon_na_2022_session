@@ -127,25 +127,35 @@ New clusterctl version available: v1.2.2 -> v1.2.3
 https://github.com/kubernetes-sigs/cluster-api/releases/tag/v1.2.3                                                        
 ```
 
-9. Install a CNI (this will be automated)
+9. Check the ArgoCD UI to verify that the three applications (Calico, Kyverno, and Kyverno policies) are deployed. You may need to refresh to trigger the deploy.
+
+10. Switch to the tenant cluster and try to create a pod:
 
 ```sh
 kind export kubeconfig --name cluster1
-kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/calico.yaml
 ```
-
-10. Check tenant cluster nodes
 
 ```sh
-kubectl get nodes
+kubectl run test --image=nginx
 ```
 
-11. Check the cluster status
+You should see an error stating that the image is not signed.
+
+11. Try running a signed image:
 
 ```sh
-kubectl config use kind-mgmt
-clusterctl describe cluster cluster1 -n cluster1
+kubectl run test --image ghcr.io/kyverno/test-verify-image:signed
 ```
+
+This will now show other policy violation errors.
+
+12. Try running a signed image with proper configuration:
+
+```sh
+kubectl create ns test
+kubectl -n test -f resources/good-pod.yaml
+```
+
 
 ## Cleanup
 
