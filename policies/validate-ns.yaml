@@ -1,0 +1,37 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: validate-namespace
+spec:
+  validationFailureAction: enforce
+  background: true
+  rules:
+  - name: check-annotations
+    match:
+      all:
+      - resources:
+          kinds:
+            - Namespace
+          names:
+            - "cluster*"
+    validate:
+      message: A maximum of 3 control-plane and 3 worker nodes is allowed
+      pattern:
+        metadata:
+          =(annotations):
+            =(clusterControlPlaneNodes): "<=3"
+            =(clusterWorkerNodes): "<=3"
+  - name: check-name
+    match:
+      all:
+      - resources:
+          kinds:
+          - Namespace
+        clusterRoles:
+        - ns-admin
+    validate:
+      message: Namespace must be prefixed with 'cluster'
+      pattern:
+        metadata:
+          name: "cluster*"

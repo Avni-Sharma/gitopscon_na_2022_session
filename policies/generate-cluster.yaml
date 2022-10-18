@@ -14,20 +14,20 @@ spec:
       - key: "{{ request.operation }}"
         operator: Equals
         value: CREATE
-    # context:
-    # - name: annotations
-    #   apiCall:
-    #     urlPath: "/api/v1/namespaces/{{request.namespace}}"
-    #     jmesPath: "metadata.annotations"  
-    # - name: clusterVersion
-    #   variable:
-    #     jmesPath: "annotations.clusterVersion || \"v1.24.3\""
-    # - name: controlPlaneNodes
-    #   variable:
-    #     jmesPath: "annotations.clusterControlPlaneNodes || \"1\""
-    # - name: workerNodes
-    #   variable:
-    #     jmesPath: "annotations.clusterWorkerNodes || \"1\""        
+    context:
+    - name: meta
+      apiCall:
+        urlPath: "/api/v1/namespaces/{{request.namespace}}"
+        jmesPath: "metadata" 
+    - name: clusterVersion
+      variable:
+        jmesPath: "meta.annotations.clusterVersion || 'v1.24.3'"
+    - name: controlPlaneNodes
+      variable:
+        jmesPath: "meta.annotations.clusterControlPlaneNodes || `1`"
+    - name: workerNodes
+      variable:
+        jmesPath: "meta.annotations.clusterWorkerNodes || `1`"
     generate:
       apiVersion: cluster.x-k8s.io/v1beta1
       kind: Cluster
@@ -44,13 +44,11 @@ spec:
               cidrBlocks:
               - 10.128.0.0/12
           topology:
-            # version: "{{ clusterVersion }}"
-            version: "v1.24.3"
+            version: "{{ clusterVersion }}"
             class: quick-start
             controlPlane:
               metadata: {}
-              # replicas: "{{ to_number(clusterVersion) }}"
-              replicas: 1
+              replicas: "{{ controlPlaneNodes }}"
             variables:
             - name: imageRepository
               value: ""
@@ -68,5 +66,4 @@ spec:
               machineDeployments:
               - class: default-worker
                 name: md-0
-                # replicas: "{{ to_number(workerNodes) }}"
-                replicas: 1
+                replicas: "{{ workerNodes }}"

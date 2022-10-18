@@ -2,30 +2,22 @@
 
 ### Session: https://sched.co/1AR9K
 
+**Policy-Based GitOps: How Policies Can Help Secure and Automate GitOps Workflows**
+
+> :warning: This repository is not intended for production use
 
 Scenarios:
 
-  Setup and prerequisites:
-  Define Kyverno and the Default PolicySets as add-ons
-
-
   #### Clusters-as-a-Service
 
-  1. A Team requests a cluster 
-    a. Create a PR with a namespace and the right label
-    b. This triggers Kyverno to generate CAPI resources in the Namespace
-    c. This triggers CAPI to provision the cluster
-  2. ArgoCD creates a CAPI based cluster 
-  3. Kyverno can restrict configurations and counts
-  4. The new cluster must be registered back to ArgoCD
-    a. Can Kyverno help register the new cluster? https://github.com/kyverno/policies/pull/359/files 
-  5. Kyverno updates the ApplicationSet for each shared service / add-on including Kyverno and the default PolicySets 
-  6. ArgoCD installs Kyverno in new cluster
-  7. ArgoCD installs standard Kyverno policies in the new cluster
-  8. Kyverno generates roles, etc. in the management cluster to prevent other teams from accessing it
-  9. User creates Namespace on the managed/tenant cluster
-  10. Kyverno (in the managed/tenant cluster) generates Namespace role-bindings and network policies 
-
+  1. A Team requests a cluster by creating a namespace with prefix `cluster` and the following optional annotations:
+    - clusterVersion e.g. "v1.24.3"
+    - clusterWorkerNodes e.g. "300"
+    - clusterControlPlaneNodes e.g. "1"
+  2. Kyverno generates CAPI templates, a cluster, and roles and role bindings
+  3. CAPI creates the cluster
+  4. Kyverno registers the cluster with ArgoCD
+  5. ArgoCD rolls out Calico, Kyverno, and policies
 
 ## Demo
 
@@ -94,6 +86,7 @@ kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/main/config/
 6. Install policies
 
 ```sh
+kubectl apply -f policies/roles
 kubectl apply -f policies/
 ```
 
@@ -102,7 +95,7 @@ NOTE: Currently, we use policies to copy the ClusterClass and all related templa
 7. Create a CAPI cluster by creating a new namespace
 
 ```sh
-kubectl create ns cluster1
+kubectl create ns cluster1 --as nancy
 ```
 
 8. Check for the tenant cluster to be created:
@@ -151,9 +144,46 @@ This will now show other policy violation errors.
 
 12. Try running a signed image with proper configuration:
 
+NOTE: THE `resources/good-pod.yaml` needs to be created...
+
 ```sh
 kubectl create ns test
-kubectl apply -n test -f resources/good-pod.yaml
+kubectl apply -n test -f resources/good-deploy.yaml
+```
+
+This should be allowed as it complies with all policy checks.
+
+13. Try accessing Nancy's cluster as Ned:
+
+```
+kubectl -n cluster1 get clusters --as ned
+```
+
+This should show an error:
+
+```sh
+Error from server (Forbidden): clusters.cluster.x-k8s.io is forbidden: User "ned" cannot list resource "clusters" in API group "cluster.x-k8s.io" in the namespace "cluster1"
+```
+
+Both Nancy and Ned can list all namespaces but can only access, and delete, clusters they created.
+
+14. Try to create a cluster with 100 nodes:
+
+```sh
+kubectl create -f resources/bad-ns.yaml
+```
+
+This should show an error:
+
+```sh
+Error from server: error when creating "resources/bad-ns.yaml": admission webhook "validate.kyverno.svc-fail" denied the request:
+
+policy Namespace//cluster9 for resource violation:
+
+validate-namespace:
+  check-annotations: 'validation error: A maximum of 3 control-plane and 3 worker
+    nodes is allowed. rule check-annotations failed at path /metadata/annotations/clusterWorkerNodes/'
+
 ```
 
 
@@ -166,4 +196,10 @@ kubectl delete ns cluster1
 kubectl delete secret cluster1 -n argocd
 kubectl delete ur --all -n kyverno
 ```
+
+
+### Enhancements
+1. Use Git to trigger cluster creation
+2. Use a separate role for ArgoCD and a cluster owner
+3. Protect add-on namespaces on the tenant cluster via policies
 
