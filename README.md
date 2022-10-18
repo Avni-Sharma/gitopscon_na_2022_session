@@ -77,7 +77,7 @@ argocd login localhost:8080 --username admin --password <SECRET>
 4. Install AppSets
 
 ```sh
-kubectl create -f appsets
+kubectl create -f appsets -n argocd
 ```
 
 ```sh
