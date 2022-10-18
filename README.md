@@ -69,7 +69,7 @@ argocd login localhost:8080 --username admin --password <SECRET>
 4. Install AppSets
 
 ```sh
-kubectl create -f appsets
+kubectl create -f appsets -n argocd
 ```
 
 ```sh
@@ -148,7 +148,7 @@ NOTE: THE `resources/good-pod.yaml` needs to be created...
 
 ```sh
 kubectl create ns test
-kubectl -n test -f resources/good-pod.yaml
+kubectl apply -n test -f resources/good-pod.yaml
 ```
 
 13. Try accessing Nancy's cluster as Ned:
