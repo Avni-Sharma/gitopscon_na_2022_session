@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kyverno-good-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kyverno
+  template:
+    metadata:
+      namespace: test      
+      labels:
+        app.kubernetes.io/name: kyverno
+    spec:
+      containers:
+      - name: kyverno-signed
+        image: ghcr.io/kyverno/test-verify-image:signed
+        ports:
+        -  containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        livenessProbe:
+          exec:
+            command:
+            - pwd
+        readinessProbe:
+          exec:
+            command:
+            - pwd
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          runAsNonRoot: false
+          seccompProfile:
+            type: RuntimeDefault
