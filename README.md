@@ -148,8 +148,10 @@ NOTE: THE `resources/good-pod.yaml` needs to be created...
 
 ```sh
 kubectl create ns test
-kubectl apply -n test -f resources/good-pod.yaml
+kubectl apply -n test -f resources/good-deploy.yaml
 ```
+
+This should be allowed as it complies with all policy checks.
 
 13. Try accessing Nancy's cluster as Ned:
 
