@@ -153,7 +153,7 @@ This will now show other policy violation errors.
 
 ```sh
 kubectl create ns test
-kubectl -n test -f resources/good-pod.yaml
+kubectl apply -n test -f resources/good-pod.yaml
 ```
 
 
