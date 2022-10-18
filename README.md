@@ -144,8 +144,6 @@ This will now show other policy violation errors.
 
 12. Try running a signed image with proper configuration:
 
-NOTE: THE `resources/good-pod.yaml` needs to be created...
-
 ```sh
 kubectl create ns test
 kubectl apply -n test -f resources/good-deploy.yaml
