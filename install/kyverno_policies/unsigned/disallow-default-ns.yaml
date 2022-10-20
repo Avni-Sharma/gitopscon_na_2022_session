@@ -11,8 +11,12 @@ spec:
       resources:
         kinds:
         - Pod
+        - DaemonSet
+        - Deployment
+        - Job
+        - StatefulSet        
     validate:
-      message: "Using 'default' namespace is not allowed."
+      message: "Using 'the default' namespace is not allowed."
       pattern:
         metadata:
           namespace: "!default"

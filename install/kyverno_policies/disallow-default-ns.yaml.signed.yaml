@@ -2,8 +2,8 @@ apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
   annotations:
-    cosign.sigstore.dev/message: H4sIAAAAAAAA/wBfAaD+H4sIAAAAAAAA/+yST2/iMBDFc86nmD1xCnFCAru5rVbaM5fd+2APqYX/RP5DRT995UAoolKL1ENVld/FcZ7n+dmeMuih5FYPjryXpi8CuqJ/Kn5VraCfleDthkohPSplHwtBW4wqFMbPD6hVdhuMMbZsmnFkjF2PrF0ts6pZ1PWqqZb1ImN1UzVtBuxG/w8RfUCXMeasDW+te0+/PtwXAQf5n5yX1nSwO+zJGTuXttxX+U4a0cEfFX0gt7ZK8kOuKaDAgF0OYFBTB69bAzX5ATnlfiCeFm6Q73pnY7ILLlIO4KIin7QCNAb+kD4TjryNjh+1IynGxbSAtRXj7Lj/HpUUGOhi3yROv6dCTd5jTx38S00Os1PaGZzLQHowNsB4GhLzU+GAIZAzLwEur2DibNLB7MdknZ9TSGv+olTR0W8expsms7WOU/7Zr3/nzp3vzHMAAAD///nwuM4ACAAAAQAA//9+rCtSXwEAAA==
-    cosign.sigstore.dev/signature: MEQCIBoC15lkxqyN2t5pwPDTdkKu/nmfFoE7X9f9kGL54DxYAiAHTMm4p2fbo+oZtW9j68PBEpSlMM1sForVk4l6nde2Wg==
+    cosign.sigstore.dev/message: H4sIAAAAAAAA/wCHAXj+H4sIAAAAAAAA/+yTzY7TMBDHc85TDL3sKa2dZLtSbgjEgdNKFdxnnWnX1B+RPS4KT4+STYolJFhxAaT+LpMZe+bvccY7tsNOeTsEilG7U8UYqtO3um6kEM3+vt31OqIx/mvV0xGT4crF7YjWFK9GCCH2bTtZ+XAvcjvz0NSFbJu6lWLfSFmIut63sgDxeok/J0XGUAjxRdtf7vvd+tLL1f4n4KA/U4jauw7O44WC81vtdxdZnrXrO3hnUmQKj95oNZaWGHtk7EoAh5Y6+Hk60FIcUFEZB1LTxgsa3SNr7z6gNinQW8WzHrmjD4pKgCdU51PwaVLkkKZQSIbilF4tSksZyhQAACyyeu7mT4BA0aegXhJfmNrI3AoefZ9575GsdwfiPEaD8aMllwc/+qfMOzAyHZM5EK/BeXU95CpoKUY8UQebT9Prgjt+Jliu6g6unYCO4DzDfJXUbzdL+oDMFNyP4+c/YOVapYPNm6X2piz/9mTduHHjX+d7AAAA///vIWJvAAgAAAEAAP//w2p0EocBAAA=
+    cosign.sigstore.dev/signature: MEQCIBR45rOU08ygLcPouZgUPnf8PLi8x2QbLLMs96fU601FAiAeeNTsmPB2gCCTtvwrVBU3HaaXvdnreOUHGMllsLHspQ==
   name: disallow-default-namespace
 spec:
   background: true
@@ -12,9 +12,13 @@ spec:
       resources:
         kinds:
         - Pod
+        - DaemonSet
+        - Deployment
+        - Job
+        - StatefulSet
     name: validate-namespace
     validate:
-      message: Using 'default' namespace is not allowed.
+      message: Using 'the default' namespace is not allowed.
       pattern:
         metadata:
           namespace: '!default'
