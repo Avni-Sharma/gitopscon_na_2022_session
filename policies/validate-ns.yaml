@@ -5,7 +5,7 @@ metadata:
   name: validate-namespace
 spec:
   validationFailureAction: enforce
-  background: true
+  background: false
   rules:
   - name: check-annotations
     match:
