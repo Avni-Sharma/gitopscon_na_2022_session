@@ -80,7 +80,7 @@ kubectl get appsets
 5. Install Kyverno
 
 ```sh
-kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/main/config/install.yaml
+kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/release-1.8/config/install.yaml
 ```
 
 6. Install policies
